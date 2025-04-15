@@ -1,11 +1,9 @@
 import math
 import turtle
 
-screen = turtle.Screen()
 blk = (0,0,0)
 
 def tri_equi(cote, fill, source):
-    screen.cv._rootwindow.deiconify()
     t = turtle.Turtle()
     if source == None:
         t.color(blk)
@@ -20,9 +18,7 @@ def tri_equi(cote, fill, source):
     if fill == True:
         t.end_fill()
 
-
 def tri_iso(side, base, fill, source):
-    screen.cv._rootwindow.deiconify()
     t = turtle.Turtle()
     if source == None:
         t.color(blk)
@@ -34,7 +30,6 @@ def tri_iso(side, base, fill, source):
     height = (side ** 2 - (base / 2) ** 2) ** 0.5
     # Draw the isosceles triangle
     angle = math.degrees(math.atan(height / (base / 2)))
-
     # Draw the isosceles triangle
     t.forward(base)  # Draw the base
     t.left(180 - angle)  # Turn to draw the first equal side
@@ -44,9 +39,7 @@ def tri_iso(side, base, fill, source):
     if fill == True:
         t.end_fill()
 
-
 def tri_rect(a, b, fill, source):
-    screen.cv._rootwindow.deiconify()
     t = turtle.Turtle()
     if source == None:
         t.color(blk)

@@ -1,10 +1,8 @@
 import turtle
 
-screen = turtle.Screen()
 blk = (0,0,0)
 
 def rect(height, length, fill, source):
-    screen.cv._rootwindow.deiconify()
     t = turtle.Turtle()
     if source == None:
         t.color(blk)
@@ -25,7 +23,6 @@ def rect(height, length, fill, source):
 
 
 def carr(cote, fill, source):
-    screen.cv._rootwindow.deiconify()
     t = turtle.Turtle()
     if source == None:
         t.color(blk)
@@ -42,7 +39,6 @@ def carr(cote, fill, source):
 
 
 def triang(cote, fill, source):
-    screen.cv._rootwindow.deiconify()
     t = turtle.Turtle()
     if source == None:
         t.color(blk)
@@ -59,7 +55,6 @@ def triang(cote, fill, source):
 
 
 def circle(rad, fill, source):
-    screen.cv._rootwindow.deiconify()
     t = turtle.Turtle()
     if source == None:
         t.color(blk)

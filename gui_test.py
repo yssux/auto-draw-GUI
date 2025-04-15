@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from geo import *
 
 root = Tk()
 root.geometry("300x250")
@@ -14,7 +15,6 @@ chkvar3 = IntVar(value=0)
 comVar = StringVar()
 lbl2Text = StringVar()
 lbl3Text = StringVar()
-
 ##########################Functions###########################
 def update_label_from_combobox(*args):
     shape = comVar.get()
@@ -24,14 +24,13 @@ def update_label_from_combobox(*args):
         lbl3Text.set("Height:")
     elif shape == "Square":
         lbl2Text.set("Side:")
-        lbl3Text.set("")  # Or set to "-" or hide the label if needed
+        lbl3Text.set("-")  # Or set to "-" or hide the label if needed
         en3.config(state="disabled")
     else:
         lbl2Text.set("")
         lbl3Text.set("")
 
 comVar.trace_add("write", update_label_from_combobox)
-
 #######################Widget Creation########################
 # Entries
 en2 = Entry(fr, textvariable=en2var)
