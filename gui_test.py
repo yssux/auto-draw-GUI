@@ -30,7 +30,19 @@ def update_label_from_combobox(*args):
         lbl2Text.set("")
         lbl3Text.set("")
 
-comVar.trace_add("write", update_label_from_combobox)
+def updateCheck(*args):
+    if chkvar3.get() == 1:
+        scl.config(state="normal", troughcolor="lightgray", fg="black")
+    else:
+        scl.config(state="disabled", troughcolor="gray", fg="gray")
+    if chkvar1.get() == 1:
+        cbtn.config(state="normal")
+    elif chkvar1.get() == 0:
+        cbtn.config(state="disabled")
+
+comVar.trace_add("write", updateLabel)
+chkvar3.trace_add("write", updateCheck)
+chkvar1.trace_add("write", updateCheck)
 #######################Widget Creation########################
 # Entries
 en2 = Entry(fr, textvariable=en2var)
