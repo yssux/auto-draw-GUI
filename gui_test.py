@@ -16,7 +16,7 @@ comVar = StringVar()
 lbl2Text = StringVar()
 lbl3Text = StringVar()
 ##########################Functions###########################
-def update_label_from_combobox(*args):
+def updateLabel(*args):
     shape = comVar.get()
     if shape == "Rectangle":
         en3.config(state="normal")
@@ -48,10 +48,10 @@ chkvar1.trace_add("write", updateCheck)
 en2 = Entry(fr, textvariable=en2var)
 en3 = Entry(fr, textvariable=en3var)
 # CheckButtons
-chk1 = ttk.Checkbutton(fr, text="Fill", variable=chkvar1, onvalue=True, offvalue=False)
+chk1 = ttk.Checkbutton(fr, text="Fill", variable=chkvar1)
 chk3 = ttk.Checkbutton(fr, text="Outline", variable=chkvar3)
 # Labels and scale
-scl = Scale(fr, from_=0, to=20, orient="horizontal", showvalue=True)
+scl = Scale(fr, from_=0, to=20, orient="horizontal", showvalue=True,state = "disabled")
 lbl = ttk.Label(fr, text="Shape:")
 lbl2 = ttk.Label(fr, textvariable=lbl2Text)
 lbl3 = ttk.Label(fr, textvariable=lbl3Text)
@@ -61,8 +61,7 @@ com = ttk.Combobox(fr, textvariable=comVar)
 com["values"] = ["Rectangle", "Square"]
 # Buttons
 btn = ttk.Button(fr, text="Draw")
-cbtn = ttk.Button(fr, text="Open color chooser")
-
+cbtn = ttk.Button(fr, text="Open color chooser", state="disabled")
 ######################Grid Placement#####################
 com.grid(row=0, column=1, columnspan=3, sticky="we", pady=5)
 en2.grid(row=2, column=1, sticky="we", columnspan=3, pady=5)
@@ -76,8 +75,10 @@ lbl3.grid(row=3, column=0)
 lbl4.grid(row=4, column=0)
 btn.grid(row=7, column=1)
 cbtn.grid(row=6, column=1, pady=5, ipadx=10)
-
 ####################################################
+updateCheck()
+updateLabel()
+
 root.wm_attributes("-topmost", 1)
 root.resizable(0, 0)
 root.mainloop()
