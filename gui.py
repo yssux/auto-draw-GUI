@@ -5,6 +5,8 @@ from geo import *  # Assuming this is your custom geometry logic
 root = Tk()
 root.title("autoDraw")
 root.geometry("300x269")
+icon = PhotoImage(file="pencil.png")
+root.iconphoto(True, icon)
 root.resizable(0, 0)
 root.wm_attributes("-topmost", 1)
 
@@ -77,7 +79,10 @@ chk3 = ttk.Checkbutton(check_frame, text="Outline", variable=chkvar3)
 cbtn = ttk.Button(fr, text="🎨 Fill Color", state="disabled")
 obtn = ttk.Button(fr, text="🖊 Outline Color", state="disabled")
 dbtn = ttk.Button(fr, text="🖌 Draw !")
-
+########################Traces#########################
+comVar.trace_add("write", updateLabel)
+chkvar3.trace_add("write", updateCheck)
+chkvar1.trace_add("write", updateCheck)
 ################ Layout ################
 lbl.grid(row=0, column=0, sticky="w", padx=5, pady=5)
 com.grid(row=0, column=1, columnspan=2, sticky="ew", pady=5)
