@@ -58,6 +58,7 @@ chkvar1.trace_add("write", updateCheck)
 lbl = ttk.Label(fr, text="Shape:")
 com = ttk.Combobox(fr, textvariable=comVar, values=["Rectangle", "Square"])
 com.current(0)
+com.config(state="readonly")
 
 # Entry labels and boxes
 lbl2 = ttk.Label(fr, textvariable=lbl2Text)
