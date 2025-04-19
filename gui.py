@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import ttk
-from geo import *  # Assuming this is your custom geometry logic
+from geo import *
 
 root = Tk()
 root.title("autoDraw")
@@ -48,10 +48,6 @@ def updateCheck(*args):
         cbtn.config(state="normal")
     elif chkvar1.get() == 0:
         cbtn.config(state="disabled")
-
-comVar.trace_add("write", updateLabel)
-chkvar3.trace_add("write", updateCheck)
-chkvar1.trace_add("write", updateCheck)
 
 ################ Widget Creation ################
 # Dropdown
@@ -113,3 +109,5 @@ updateLabel()
 updateCheck()
 
 root.mainloop()
+
+#Icon made by Freepik from www.flaticon.com
