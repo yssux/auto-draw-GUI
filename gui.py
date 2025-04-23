@@ -4,7 +4,7 @@ from geo import *
 
 root = Tk()
 root.title("autoDraw")
-root.geometry("300x269")
+root.geometry("300x265")
 icon = PhotoImage(file="pencil.png")
 root.iconphoto(True, icon)
 root.resizable(0, 0)
@@ -33,6 +33,10 @@ def updateLabel(*args):
         lbl2Text.set("Side:")
         lbl3Text.set("-")
         en3.config(state="disabled")
+    elif shape == "Triangle":
+        lbl2Text.set("Side:")
+        lbl3Text.set("-")
+        en3.config(state="disabled")
     else:
         lbl2Text.set("")
         lbl3Text.set("")
@@ -52,7 +56,7 @@ def updateCheck(*args):
 ################ Widget Creation ################
 # Dropdown
 lbl = ttk.Label(fr, text="Shape:")
-com = ttk.Combobox(fr, textvariable=comVar, values=["Rectangle", "Square"])
+com = ttk.Combobox(fr, textvariable=comVar, values=["Rectangle", "Square", "Triangle"])
 com.current(0)
 com.config(state="readonly")
 
