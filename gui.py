@@ -1,13 +1,17 @@
-from tkinter import *
+from tkinter import * # type: ignore
 from tkinter import ttk
-from geo import *
+from tkinter import colorchooser
+from geo.basic import *
+from geo.triangles import *
+from tkinter import messagebox as msg
 
+blk = (0, 0, 0)
 root = Tk()
 root.title("autoDraw")
 root.geometry("300x265")
-icon = PhotoImage(file="pencil.png")
+icon = PhotoImage(file="win_icon.png")
 root.iconphoto(True, icon)
-root.resizable(0, 0)
+root.resizable(0, 0) # type: ignore
 root.wm_attributes("-topmost", 1)
 
 fr = ttk.Frame(root, padding=10)
@@ -21,6 +25,7 @@ chkvar3 = IntVar(value=0)
 comVar = StringVar()
 lbl2Text = StringVar()
 lbl3Text = StringVar()
+sclVar = IntVar(value=0)
 
 ################ Functions ################
 def updateLabel(*args):
@@ -52,7 +57,109 @@ def updateCheck(*args):
         cbtn.config(state="normal")
     elif chkvar1.get() == 0:
         cbtn.config(state="disabled")
+class Logic:
+    def __init__(self) -> None:
+        self.rect = rect
+        self.carr = carr
+        self.tri_equi = tri_equi
+        self.outColored = None
+    def cChooser(self, outline, fillcolor):
+        gui_chooser = colorchooser.askcolor()
+        if gui_chooser[1] is not None:
+            if outline:
+                self.outColor = gui_chooser[1]
+                self.outColored
+            elif outline == False:
+                self.chosen_c = gui_chooser[1]
+        elif gui_chooser[1] is None:
+            no_color = msg.showwarning("Please select a color")
+            if no_color == "ok":
+                pass
+    def logicCaller(self):
+        self.shape = comVar.get()
+        self.outline = chkvar3.get()
+        self.filled = chkvar1.get()
+        self.m1 = float(en2var.get())
+        self.m2 = float(en3var.get())
+        self.outSize = float(sclVar.get())
+        if self.outline and self.filled:
+            self.logic(True, True)
+        elif self.outline and not self.filled:
+            self.logic(False, True)
+        elif not self.outline and self.filled:
+            self.logic(True, False)
+        elif not self.outline and not self.filled:
+            self.logic(False, False)
+    def logic(self, filling, outlined):
+        match self.shape:
+            case "Square":
+                if filling:
+                    self.carr(self.m1, True, self.chosen_c)
+                if outlined and self.outColored:
+                    self.outDraw(self.carr, self.outSize, self.chosen_c)
+                elif outlined and not self.outColored:
+                    self.outDraw(self.carr, self.outSize, None)
+                elif not outlined and not filling and not self.outColored:
+                    self.carr(self.m1, False, None)
+                turtle.done()
+            case "Rectangle":
+                if filling:
+                    self.rect(self.m1, self.m2, True, self.chosen_c)
+                elif not filling:
+                    self.rect(self.m1, self.m2, False, None)
+                if outlined and self.outColored:
+                    self.outDraw(self.rect, self.outSize, self.outColor)
+                elif outlined and not self.outColored:
+                    self.outDraw(self.rect, self.outSize, None)
+                elif not outlined and not filling and not self.outColored:
+                    self.rect(self.m1, self.m2, False, None)
+                turtle.done()
+            case "Triangle":
+                if filling:
+                    self.tri_equi(self.m1, True, self.chosen_c)
+                elif not filling and not outlined:
+                    self.tri_equi(self.m1, False, None)
+                if outlined and self.outColored:
+                    self.outDraw(self.tri_equi, self.outSize, self.outColor)
+                elif outlined and not self.outColored:
+                    self.outDraw(self.tri_equi, self.outSize, None)
+                turtle.done()
+    def outDraw(self, shape, size, src):
+        turtle.pensize(size)
+        turtle.penup()
+        turtle.setheading(0)
+        turtle.pendown()
+        if bool(src) == True:
+            turtle.color(src)
+        else:
+            turtle.color(blk)
+        if shape == self.tri_equi:
+            self.outTriEqui(self.m1)
+        elif shape == self.rect:
+            self.outRect(self.m1, self.m2)
+        elif shape == self.carr:
+            self.outSq(self.m1)
+    def outSq(self, size):
+        for x in range(4):
+            turtle.forward(size)
+            turtle.left(90)
+    def outRect(self, height, width):
+        for _ in range(2):
+            turtle.forward(width)
+            turtle.left(90)
+            turtle.forward(height)
+            turtle.left(90)
+    def outTriEqui(self, side):
+        for _ in range(3):
+            turtle.forward(side)
+            turtle.left(120)
 
+logic = Logic()
+def cAsk(src: str):
+    if src == "outline":
+        logic.cChooser(True, False)
+    elif src == "fill":
+        logic.cChooser(False, True)
 ################ Widget Creation ################
 # Dropdown
 lbl = ttk.Label(fr, text="Shape:")
@@ -69,17 +176,16 @@ en3 = ttk.Entry(fr, textvariable=en3var)
 
 # Outline size
 lbl4 = ttk.Label(fr, text="Outline Size:")
-scl = Scale(fr, from_=0, to=20, orient="horizontal", showvalue=True, state="disabled")
+scl = Scale(fr, from_=0, to=20, orient="horizontal", showvalue=True, state="disabled", variable=sclVar)
 
 # Checkbox frame
 check_frame = ttk.Frame(fr)
-chk1 = ttk.Checkbutton(check_frame, text="Fill", variable=chkvar1)
-chk3 = ttk.Checkbutton(check_frame, text="Outline", variable=chkvar3)
-
+chk1 = ttk.Checkbutton(check_frame, text="Fill", variable=chkvar1, onvalue=True, offvalue=False)
+chk3 = ttk.Checkbutton(check_frame, text="Outline", variable=chkvar3, onvalue=True, offvalue=False)
 # Buttons
-cbtn = ttk.Button(fr, text="🎨 Fill Color", state="disabled")
-obtn = ttk.Button(fr, text="🖊 Outline Color", state="disabled")
-dbtn = ttk.Button(fr, text="🖌 Draw !")
+cbtn = ttk.Button(fr, text="🎨 Fill Color", state="disabled", command= lambda: cAsk("fill"))
+obtn = ttk.Button(fr, text="🖊 Outline Color", state="disabled", command= lambda: cAsk("outline"))
+dbtn = ttk.Button(fr, text="🖌 Draw !", command = logic.logicCaller)
 ########################Traces#########################
 comVar.trace_add("write", updateLabel)
 chkvar3.trace_add("write", updateCheck)

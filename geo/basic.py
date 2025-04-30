@@ -2,7 +2,7 @@ import turtle
 
 blk = (0,0,0)
 
-def rect(height, length, fill, source):
+def rect(height : float, length : float, fill, source):
     t = turtle.Turtle()
     if source == None:
         t.color(blk)
@@ -22,7 +22,7 @@ def rect(height, length, fill, source):
         t.end_fill()
 
 
-def carr(cote, fill, source):
+def carr(cote : float, fill, source):
     t = turtle.Turtle()
     if source == None:
         t.color(blk)
@@ -38,7 +38,7 @@ def carr(cote, fill, source):
         t.end_fill()
 
 
-def triang(cote, fill, source):
+def triang(cote : float, fill, source):
     t = turtle.Turtle()
     if source == None:
         t.color(blk)
