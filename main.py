@@ -10,8 +10,7 @@ from tkinter import messagebox as msg
 blk = (0, 0, 0)
 root = Tk()
 try:
-    icon = PhotoImage(file="pencil.ico")
-    root.iconphoto(False, icon)
+    root.iconbitmap("pencil.ico")
     root.title("autoDraw")
     root.geometry("300x265")
     root.resizable(0, 0) # type: ignore
