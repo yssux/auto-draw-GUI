@@ -4,19 +4,21 @@ import turtle
 blk = (0,0,0)
 
 def tri_equi(cote, fill, source):
-    t = turtle.Turtle()
+    trit = turtle.Turtle()
+    trit.speed(0)
+    trit.hideturtle()
     if source == None:
-        t.color(blk)
+        trit.color(blk)
     elif fill == True and bool(source) == True:
         fcolor = source
-        t.color(fcolor)
-        t.begin_fill()
+        trit.color(fcolor)
+        trit.begin_fill()
 
     for x in range(1, 4):
-        t.forward(cote)
-        t.left(360 / 3)
+        trit.forward(cote)
+        trit.left(360 / 3)
     if fill == True:
-        t.end_fill()
+        trit.end_fill()
 
 def tri_iso(side, base, fill, source):
     t = turtle.Turtle()
