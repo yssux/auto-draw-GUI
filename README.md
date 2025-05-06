@@ -1,2 +1,2 @@
-# auto-draw-GUI
-A version of my CLI autoDraw project with a basic form-like GUI using `customtkinter`
+# auto-draw-CTk
+A version of my autoDraw Tk project but ported to `customtkinter` for better look. Will maintain dev work on both branches, but Tk will recieve the latest features first.
