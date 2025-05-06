@@ -1,6 +1,6 @@
 import turtle
-from tkinter import * # type: ignore
-from tkinter import ttk
+from customtkinter import *
+from tkinter import StringVar, IntVar, Scale
 from tkinter import colorchooser
 from geo.basic import *
 from geo.triangles import *
@@ -8,11 +8,11 @@ from tkinter import messagebox as msg
 
 #Setup
 blk = (0, 0, 0)
-root = Tk()
+root = CTk()
 try:
     root.iconbitmap("pencil.ico")
     root.title("autoDraw")
-    root.geometry("300x265")
+    root.geometry("360x310")
     root.resizable(0, 0) # type: ignore
     root.wm_attributes("-topmost", 1)
     screen = turtle.Screen()
@@ -22,8 +22,8 @@ try:
     screen.title("autoDraw")
     window.withdraw() #type: ignore
     turtle.hideturtle()
-    fr = ttk.Frame(root, padding=10)
-    fr.pack(fill="both", expand=True)
+    fr = CTkFrame(root)
+    fr.pack(fill="both", expand=True, padx=10, pady=10)
     ############### Variable Definitions ###################
     en2var = IntVar(value=None)
     en3var = IntVar(value=None)
@@ -32,38 +32,38 @@ try:
     comVar = StringVar()
     lbl2Text = StringVar()
     lbl3Text = StringVar()
-    sclVar = IntVar(value=0)
+    sclVar = IntVar(value=0)   
 
     ################ Functions ################
     def updateLabel(*args):
         shape = comVar.get()
         if shape == "Rectangle":
-            en3.config(state="normal")
+            en3.configure(state="normal")
             lbl2Text.set("Length:")
             lbl3Text.set("Height:")
         elif shape == "Square":
             lbl2Text.set("Side:")
             lbl3Text.set("-")
-            en3.config(state="disabled")
+            en3.configure(state="disabled")
         elif shape == "Triangle":
             lbl2Text.set("Side:")
             lbl3Text.set("-")
-            en3.config(state="disabled")
+            en3.configure(state="disabled")
         else:
             lbl2Text.set("")
             lbl3Text.set("")
 
     def updateCheck(*args):
         if chkvar3.get() == 1:
-            scl.config(state="normal", troughcolor="lightgray", fg="black")
-            obtn.config(state="normal")
+            slider.configure(state="normal")
+            obtn.configure(state="normal")
         else:
-            scl.config(state="disabled", troughcolor="gray", fg="gray")
-            obtn.config(state="disabled")
+            slider.configure(state="disabled")
+            obtn.configure(state="disabled")
         if chkvar1.get() == 1:
-            cbtn.config(state="normal")
+            cbtn.configure(state="normal")
         elif chkvar1.get() == 0:
-            cbtn.config(state="disabled")
+            cbtn.configure(state="disabled")
     class Logic:
         def __init__(self) -> None:
             self.rect = rect
@@ -188,30 +188,26 @@ try:
             logic.cChooser(False, True)
     ################ Widget Creation ################
     # Dropdown
-    lbl = ttk.Label(fr, text="Shape:")
-    com = ttk.Combobox(fr, textvariable=comVar, values=["Rectangle", "Square", "Triangle"])
-    com.current(0)
-    com.config(state="readonly")
-
+    lbl = CTkLabel(fr, text="Shape:")
+    com = CTkOptionMenu(fr, variable=comVar, values=["Rectangle", "Square", "Triangle"])
+    com.configure(state="readonly")
     # Entry labels and boxes
-    lbl2 = ttk.Label(fr, textvariable=lbl2Text)
-    en2 = ttk.Entry(fr, textvariable=en2var)
-
-    lbl3 = ttk.Label(fr, textvariable=lbl3Text)
-    en3 = ttk.Entry(fr, textvariable=en3var)
-
+    lbl2 = CTkLabel(fr, textvariable=lbl2Text)
+    en2 = CTkEntry(fr, textvariable=en2var)
+    lbl3 = CTkLabel(fr, textvariable=lbl3Text)
+    en3 = CTkEntry(fr, textvariable=en3var)
     # Outline size
-    lbl4 = ttk.Label(fr, text="Outline Size:")
-    scl = Scale(fr, from_=0, to=20, orient="horizontal", showvalue=True, state="disabled", variable=sclVar)
-
+    lbl4 = CTkLabel(fr, text="Outline Size:")
+    slider = CTkSlider(fr, from_=0, to=20, variable=sclVar)
+    slider.set(0)
     # Checkbox frame
-    check_frame = ttk.Frame(fr)
-    chk1 = ttk.Checkbutton(check_frame, text="Fill", variable=chkvar1, onvalue=True, offvalue=False)
-    chk3 = ttk.Checkbutton(check_frame, text="Outline", variable=chkvar3, onvalue=True, offvalue=False)
+    check_frame = CTkFrame(fr)
+    chk1 = CTkCheckBox(check_frame, text="Fill", variable=chkvar1, onvalue=True, offvalue=False)
+    chk3 = CTkCheckBox(check_frame, text="Outline", variable=chkvar3, onvalue=True, offvalue=False)
     # Buttons
-    cbtn = ttk.Button(fr, text="🎨 Fill Color", state="disabled", command= lambda: cAsk("fill"))
-    obtn = ttk.Button(fr, text="🖊 Outline Color", state="disabled", command= lambda: cAsk("outline"))
-    dbtn = ttk.Button(fr, text="🖌 Draw !", command=logic.logicGetter)
+    cbtn = CTkButton(fr, text="Fill Color", state="disabled", command= lambda: cAsk("fill"))
+    obtn = CTkButton(fr, text="Outline Color", state="disabled", command= lambda: cAsk("outline"))
+    dbtn = CTkButton(fr, text="Draw !", command=logic.logicGetter)
     ########################Traces#########################
     comVar.trace_add("write", updateLabel)
     chkvar3.trace_add("write", updateCheck)
@@ -227,15 +223,15 @@ try:
     en3.grid(row=2, column=1, columnspan=2, sticky="ew", pady=3)
 
     lbl4.grid(row=3, column=0, sticky="w", padx=5)
-    scl.grid(row=3, column=1, columnspan=2, sticky="ew", pady=3)
+    slider.grid(row=3, column=1, columnspan=2, sticky="ew", pady=3)
 
-    check_frame.grid(row=4, column=0, columnspan=3, pady=5)
+    check_frame.grid(row=4, column=0, columnspan=3, pady=10)
     chk1.grid(row=0, column=0, padx=10)
     chk3.grid(row=0, column=1, padx=10)
 
-    cbtn.grid(row=5, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
-    obtn.grid(row=5, column=2, sticky="ew", padx=5, pady=5)
-    dbtn.grid(row=6, column=0, columnspan=3, sticky="ew", pady=5)
+    cbtn.grid(row=5, column=0, columnspan=2, sticky="ew", padx=9, pady=4)
+    obtn.grid(row=5, column=2, sticky="ew", padx=12, pady=5)
+    dbtn.grid(row=6, column=0, columnspan=3, sticky="ew", pady=17)
     # Make entries and combo expand
     fr.columnconfigure(1, weight=1)
     fr.columnconfigure(2, weight=1)
