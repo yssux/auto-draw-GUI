@@ -239,7 +239,8 @@ try:
     # Initialize labels and states
     updateLabel()
     updateCheck()
-
+    
+    root.bind_all("<Return>", lambda event: logic.logicGetter())
     root.mainloop()
 except Exception as e:
     err = msg.showerror("Error", f"An error occurred: {e}")
