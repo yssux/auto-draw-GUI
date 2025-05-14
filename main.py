@@ -45,10 +45,12 @@ try:
             lbl2Text.set("Side:")
             lbl3Text.set("-")
             en3.configure(state="disabled")
+            en3.configure(fg_color="gray")
         elif shape == "Triangle":
             lbl2Text.set("Side:")
             lbl3Text.set("-")
             en3.configure(state="disabled")
+            en3.configure(fg_color="gray")
         else:
             lbl2Text.set("")
             lbl3Text.set("")
