@@ -244,6 +244,7 @@ try:
     updateLabel()
     updateCheck()
 
+    root.bind("<Return>", lambda event: logic.logicGetter())
     root.mainloop()
 except Exception as e:
     err = msg.showerror("Error", f"An error occurred: {e}")
