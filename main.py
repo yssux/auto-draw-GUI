@@ -9,10 +9,11 @@ from tkinter import messagebox as msg
 #Setup
 blk = (0, 0, 0)
 root = Tk()
+typeVal = ["Equilateral", "Isosceles", "Right"]
 try:
     root.iconbitmap("pencil.ico")
     root.title("autoDraw")
-    root.geometry("300x265")
+    root.geometry("300x340")
     root.resizable(0, 0) # type: ignore
     root.wm_attributes("-topmost", 1)
     screen = turtle.Screen()
@@ -30,6 +31,7 @@ try:
     chkvar1 = IntVar()
     chkvar3 = IntVar()
     comVar = StringVar()
+    comVarType = StringVar()
     lbl2Text = StringVar()
     lbl3Text = StringVar()
     sclVar = IntVar(value=0)
@@ -37,6 +39,7 @@ try:
     ################ Functions ################
     def updateLabel(*args):
         shape = comVar.get()
+        type = comVarType.get()
         if shape == "Rectangle":
             en3.config(state="normal")
             lbl2Text.set("Length:")
@@ -45,14 +48,18 @@ try:
             lbl2Text.set("Side:")
             lbl3Text.set("-")
             en3.config(state="disabled")
-        elif shape == "Triangle":
+        if shape == "Triangle" and type == "Equilateral":
             lbl2Text.set("Side:")
             lbl3Text.set("-")
             en3.config(state="disabled")
-        else:
-            lbl2Text.set("")
-            lbl3Text.set("")
-
+        elif shape == "Triangle" and type == "Isosceles" or type == "Right":
+            lbl2Text.set("Base:")
+            lbl3Text.set("Height:")
+            en3.config(state="normal")
+        if shape == None:
+            lbl2Text.set("-")
+            lbl3Text.set("-")
+            en3.config(state="disabled")
     def updateCheck(*args):
         if chkvar3.get() == 1:
             scl.config(state="normal", troughcolor="lightgray", fg="black")
@@ -85,6 +92,7 @@ try:
                     pass
         def logicGetter(self):
             self.shape = comVar.get()
+            self.shapeType = comVarType.get()
             self.outline = chkvar3.get()
             self.filled = chkvar1.get()
             self.m1 = int(en2var.get())
@@ -138,16 +146,22 @@ try:
                         self.rect(self.m1, self.m2, False, None)
                     turtle.done()
                 case "Triangle":
-                    window.deiconify() #type: ignore
-                    if filling:
-                        self.tri_equi(self.m1, True, self.chosen_c)
-                    elif not filling and not outlined:
-                        self.tri_equi(self.m1, False, None)
-                    if outlined and self.outColored:
-                        self.outDraw(self.tri_equi, self.outSize, self.outColor)
-                    elif outlined and not self.outColored:
-                        self.outDraw(self.tri_equi, self.outSize, None)
-                    turtle.done()
+                    match self.shapeType:
+                        case "Equilateral":
+                            window.deiconify() #type: ignore
+                            if filling:
+                                self.tri_equi(self.m1, True, self.chosen_c)
+                            elif not filling and not outlined:
+                                self.tri_equi(self.m1, False, None)
+                            if outlined and self.outColored:
+                                self.outDraw(self.tri_equi, self.outSize, self.outColor)
+                            elif outlined and not self.outColored:
+                                self.outDraw(self.tri_equi, self.outSize, None)
+                            turtle.done()
+                        case "Isosceles":
+                            pass
+                        case "Right":
+                            pass
         def outDraw(self, shape, size, src):
             self.outliner.pensize(size)
             self.outliner.penup()
@@ -187,12 +201,16 @@ try:
         elif src == "fill":
             logic.cChooser(False, True)
     ################ Widget Creation ################
-    # Dropdown
+    # ShapeDropdown
     lbl = ttk.Label(fr, text="Shape:")
     com = ttk.Combobox(fr, textvariable=comVar, values=["Rectangle", "Square", "Triangle"])
     com.current(0)
     com.config(state="readonly")
-
+    #ShapeType Dropdown
+    lblType = ttk.Label(fr, text="Shape Type:")
+    comType = ttk.Combobox(fr, textvariable=comVarType, values=typeVal)
+    com.current(0)
+    comType.config(state="readonly")
     # Entry labels and boxes
     lbl2 = ttk.Label(fr, textvariable=lbl2Text)
     en2 = ttk.Entry(fr, textvariable=en2var)
@@ -212,6 +230,7 @@ try:
     cbtn = ttk.Button(fr, text="🎨 Fill Color", state="disabled", command= lambda: cAsk("fill"))
     obtn = ttk.Button(fr, text="🖊 Outline Color", state="disabled", command= lambda: cAsk("outline"))
     dbtn = ttk.Button(fr, text="🖌 Draw !", command=logic.logicGetter)
+    ebtn = ttk.Button(fr, text="⬇️ Export", command=lambda: msg.showinfo("Info", "This feature is not implemented yet."))
     ########################Traces#########################
     comVar.trace_add("write", updateLabel)
     chkvar3.trace_add("write", updateCheck)
@@ -219,23 +238,25 @@ try:
     ################ Layout ################
     lbl.grid(row=0, column=0, sticky="w", padx=5, pady=5)
     com.grid(row=0, column=1, columnspan=2, sticky="ew", pady=5)
+    comType.grid(row=1, column=1, columnspan=2, sticky="ew", pady=5)
 
-    lbl2.grid(row=1, column=0, sticky="w", padx=5)
-    en2.grid(row=1, column=1, columnspan=2, sticky="ew", pady=3)
+    lbl2.grid(row=2, column=0, sticky="w", padx=5)
+    en2.grid(row=2, column=1, columnspan=2, sticky="ew", pady=3)
 
-    lbl3.grid(row=2, column=0, sticky="w", padx=5)
-    en3.grid(row=2, column=1, columnspan=2, sticky="ew", pady=3)
+    lbl3.grid(row=3, column=0, sticky="w", padx=5)
+    en3.grid(row=3, column=1, columnspan=2, sticky="ew", pady=3)
 
-    lbl4.grid(row=3, column=0, sticky="w", padx=5)
-    scl.grid(row=3, column=1, columnspan=2, sticky="ew", pady=3)
+    lbl4.grid(row=4, column=0, sticky="w", padx=5)
+    scl.grid(row=4, column=1, columnspan=2, sticky="ew", pady=3)
 
-    check_frame.grid(row=4, column=0, columnspan=3, pady=5)
+    check_frame.grid(row=5, column=0, columnspan=3, pady=5)
     chk1.grid(row=0, column=0, padx=10)
     chk3.grid(row=0, column=1, padx=10)
 
-    cbtn.grid(row=5, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
-    obtn.grid(row=5, column=2, sticky="ew", padx=5, pady=5)
-    dbtn.grid(row=6, column=0, columnspan=3, sticky="ew", pady=5)
+    cbtn.grid(row=6, column=0, columnspan=2, sticky="ew", padx=5, pady=5,  ipady=4)
+    obtn.grid(row=6, column=2, sticky="ew", padx=5, pady=5, ipady=4)
+    dbtn.grid(row=7, column=0, columnspan=3, sticky="ew", pady=5, ipady=5)
+    ebtn.grid(row=8, column=0, columnspan=3, sticky="ew", pady=5, ipady=5)
     # Make entries and combo expand
     fr.columnconfigure(1, weight=1)
     fr.columnconfigure(2, weight=1)
