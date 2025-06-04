@@ -9,7 +9,6 @@ from tkinter import messagebox as msg
 #Setup
 blk = (0, 0, 0)
 root = Tk()
-typeVal = ["Equilateral", "Isosceles", "Right"]
 try:
     root.iconbitmap("pencil.ico")
     root.title("autoDraw")
@@ -42,21 +41,25 @@ try:
         type = comVarType.get()
         if shape == "Rectangle":
             en3.config(state="normal")
+            comType.config(state="disabled")
             lbl2Text.set("Length:")
             lbl3Text.set("Height:")
         elif shape == "Square":
+            en3.config(state="disabled")
+            comType.config(state="disabled")
             lbl2Text.set("Side:")
             lbl3Text.set("-")
-            en3.config(state="disabled")
-        if shape == "Triangle" and type == "Equilateral":
-            lbl2Text.set("Side:")
-            lbl3Text.set("-")
-            en3.config(state="disabled")
-        elif shape == "Triangle" and type == "Isosceles" or type == "Right":
-            lbl2Text.set("Base:")
-            lbl3Text.set("Height:")
-            en3.config(state="normal")
-        if shape == None:
+        elif shape == "Triangle":
+                comType.config(state="normal")
+                if type == "Equilateral":
+                    lbl2Text.set("Side:")
+                    lbl3Text.set("-")
+                    en3.config(state="disabled")
+                elif type in ("Isosceles", "Right"):
+                    lbl2Text.set("Base:")
+                    lbl3Text.set("Height:")
+                    en3.config(state="normal")
+        elif shape is None or shape == "":
             lbl2Text.set("-")
             lbl3Text.set("-")
             en3.config(state="disabled")
@@ -208,7 +211,7 @@ try:
     com.config(state="readonly")
     #ShapeType Dropdown
     lblType = ttk.Label(fr, text="Shape Type:")
-    comType = ttk.Combobox(fr, textvariable=comVarType, values=typeVal)
+    comType = ttk.Combobox(fr, textvariable=comVarType, values=["Equilateral", "Isosceles", "Right"])
     com.current(0)
     comType.config(state="readonly")
     # Entry labels and boxes
@@ -233,12 +236,14 @@ try:
     ebtn = ttk.Button(fr, text="⬇️ Export", command=lambda: msg.showinfo("Info", "This feature is not implemented yet."))
     ########################Traces#########################
     comVar.trace_add("write", updateLabel)
+    comVarType.trace_add("write", updateLabel)
     chkvar3.trace_add("write", updateCheck)
     chkvar1.trace_add("write", updateCheck)
     ################ Layout ################
     lbl.grid(row=0, column=0, sticky="w", padx=5, pady=5)
     com.grid(row=0, column=1, columnspan=2, sticky="ew", pady=5)
     comType.grid(row=1, column=1, columnspan=2, sticky="ew", pady=5)
+    lblType.grid(row=1, column=0, sticky="w", padx=5, pady=5)
 
     lbl2.grid(row=2, column=0, sticky="w", padx=5)
     en2.grid(row=2, column=1, columnspan=2, sticky="ew", pady=3)
