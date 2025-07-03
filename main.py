@@ -79,6 +79,8 @@ try:
             self.rect = rect
             self.carr = carr
             self.tri_equi = tri_equi
+            self.tri_iso = tri_iso
+            self.tri_rect = tri_rect
             self.outColored = None
             self.outliner = turtle.Turtle()
         def cChooser(self, outline, fillcolor):
@@ -162,9 +164,26 @@ try:
                                 self.outDraw(self.tri_equi, self.outSize, None)
                             turtle.done()
                         case "Isosceles":
-                            pass
+                            window.deiconify()
+                            if filling:
+                                self.tri_iso(self.m1, self.m2, True, self.chosen_c)
+                            elif not filling and not outlined:
+                                self.tri_iso(self.m1, self.m2, False, None)
+                            if outlined and self.outColored:
+                                self.outDraw(self.tri_iso, self.outSize, self.outColor)
+                            elif outlined and not self.outColored:
+                                self.outDraw(self.tri_iso, self.outSize, None)
+                            turtle.done()                                                    
                         case "Right":
-                            pass
+                            if filling:
+                                self.tri_rect(self.m1, self.m2, True, self.chosen_c)                            
+                            elif not filling and not outlined:
+                                self.tri_rect(self.m1,self.m2, False, None)
+                            if outlined and self.outColored:
+                                self.outDraw(self.tri_rect, self.outSize, self.outColor)
+                            elif outlined and not self.outColored:
+                                self.outDraw(self.tri_rect, self.outSize, None)
+                            turtle.done()
         def outDraw(self, shape, size, src):
             self.outliner.pensize(size)
             self.outliner.penup()
@@ -196,6 +215,17 @@ try:
             for _ in range(3):
                 self.outliner.forward(side)
                 self.outliner.left(120)
+        def outTrIso(self, side, base, fill):
+            height = (side ** 2 - (base / 2) ** 2) ** 0.5
+            # Draw the isosceles triangle
+            angle = math.degrees(math.atan(height / (base / 2)))
+            self.outliner.forward(base)  # Draw the base
+            self.outliner.left(180 - angle)  # Turn to draw the first equal side
+            self.outliner.forward(side)  # Draw the first equal side
+            self.outliner.left(2 * angle)  # Turn to draw the second equal side
+            self.outliner.forward(side)
+            if fill == True:
+                self.outliner.end_fill()
 
     logic = Logic()
     def cAsk(src: str):
