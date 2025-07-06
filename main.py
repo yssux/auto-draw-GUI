@@ -9,7 +9,6 @@ from tkinter import messagebox as msg
 #Setup
 blk = (0, 0, 0)
 root = Tk()
-typeVal = ["Equilateral", "Isosceles", "Right"]
 try:
     root.iconbitmap("pencil.ico")
     root.title("autoDraw")
@@ -42,21 +41,25 @@ try:
         type = comVarType.get()
         if shape == "Rectangle":
             en3.config(state="normal")
+            comType.config(state="disabled")
             lbl2Text.set("Length:")
             lbl3Text.set("Height:")
         elif shape == "Square":
+            en3.config(state="disabled")
+            comType.config(state="disabled")
             lbl2Text.set("Side:")
             lbl3Text.set("-")
-            en3.config(state="disabled")
-        if shape == "Triangle" and type == "Equilateral":
-            lbl2Text.set("Side:")
-            lbl3Text.set("-")
-            en3.config(state="disabled")
-        elif shape == "Triangle" and type == "Isosceles" or type == "Right":
-            lbl2Text.set("Base:")
-            lbl3Text.set("Height:")
-            en3.config(state="normal")
-        if shape == None:
+        elif shape == "Triangle":
+                comType.config(state="normal")
+                if type == "Equilateral":
+                    lbl2Text.set("Side:")
+                    lbl3Text.set("-")
+                    en3.config(state="disabled")
+                elif type in ("Isosceles", "Right"):
+                    lbl2Text.set("Base:")
+                    lbl3Text.set("Height:")
+                    en3.config(state="normal")
+        elif shape is None or shape == "":
             lbl2Text.set("-")
             lbl3Text.set("-")
             en3.config(state="disabled")
@@ -76,6 +79,8 @@ try:
             self.rect = rect
             self.carr = carr
             self.tri_equi = tri_equi
+            self.tri_iso = tri_iso
+            self.tri_rect = tri_rect
             self.outColored = None
             self.outliner = turtle.Turtle()
         def cChooser(self, outline, fillcolor):
@@ -159,9 +164,27 @@ try:
                                 self.outDraw(self.tri_equi, self.outSize, None)
                             turtle.done()
                         case "Isosceles":
-                            pass
+                            window.deiconify()
+                            if filling:
+                                self.tri_iso(self.m1, self.m2, True, self.chosen_c)
+                            elif not filling and not outlined:
+                                self.tri_iso(self.m1, self.m2, False, None)
+                            if outlined and self.outColored:
+                                self.outDraw(self.tri_iso, self.outSize, self.outColor)
+                            elif outlined and not self.outColored:
+                                self.outDraw(self.tri_iso, self.outSize, None)
+                            turtle.done()                                                    
                         case "Right":
-                            pass
+                            window.deiconify()
+                            if filling:
+                                self.tri_rect(self.m1, self.m2, True, self.chosen_c)                            
+                            elif not filling and not outlined:
+                                self.tri_rect(self.m1,self.m2, False, None)
+                            if outlined and self.outColored:
+                                self.outDraw(self.tri_rect, self.outSize, self.outColor)
+                            elif outlined and not self.outColored:
+                                self.outDraw(self.tri_rect, self.outSize, None)
+                            turtle.done()
         def outDraw(self, shape, size, src):
             self.outliner.pensize(size)
             self.outliner.penup()
@@ -179,6 +202,12 @@ try:
                 self.outRect(self.m1, self.m2)
             elif shape == self.carr:
                 self.outSq(self.m1)
+            elif shape == self.tri_rect:
+                self.outTriRect(self.m1, self.m2)
+            elif shape == self.tri_iso:
+                self.outTrIso(self.m1, self.m2)
+            elif shape == self.tri_equi:
+                self.outTriEqui(self.m1)
         def outSq(self, size):
             for x in range(4):
                 self.outliner.forward(size)
@@ -193,7 +222,29 @@ try:
             for _ in range(3):
                 self.outliner.forward(side)
                 self.outliner.left(120)
-
+        def outTrIso(self, side, base):
+            height = (side ** 2 - (base / 2) ** 2) ** 0.5
+            # Draw the isosceles triangle
+            angle = math.degrees(math.atan(height / (base / 2)))
+            self.outliner.forward(base)  # Draw the base
+            self.outliner.left(180 - angle)  # Turn to draw the first equal side
+            self.outliner.forward(side)  # Draw the first equal side
+            self.outliner.left(2 * angle)  # Turn to draw the second equal side
+            self.outliner.forward(side)
+        def outTriRect(self, a, b):
+            # Calculate hypotenuse
+            c = math.sqrt(a ** 2 + b ** 2)
+            angle = math.degrees(math.atan2(b, a))
+            # Move to starting position (optional)
+            self.outliner.penup()
+            self.outliner.goto(-a // 2, -b // 2)  # Centering the triangle
+            self.outliner.pendown()
+            # Draw the triangle correctly
+            self.outliner.forward(a)  # Base
+            self.outliner.left(90)
+            self.outliner.forward(b)  # Height
+            self.outliner.left(90 + angle)
+            self.outliner.forward(c)  # Hypotenuse
     logic = Logic()
     def cAsk(src: str):
         if src == "outline":
@@ -208,7 +259,7 @@ try:
     com.config(state="readonly")
     #ShapeType Dropdown
     lblType = ttk.Label(fr, text="Shape Type:")
-    comType = ttk.Combobox(fr, textvariable=comVarType, values=typeVal)
+    comType = ttk.Combobox(fr, textvariable=comVarType, values=["Equilateral", "Isosceles", "Right"])
     com.current(0)
     comType.config(state="readonly")
     # Entry labels and boxes
@@ -233,12 +284,14 @@ try:
     ebtn = ttk.Button(fr, text="⬇️ Export", command=lambda: msg.showinfo("Info", "This feature is not implemented yet."))
     ########################Traces#########################
     comVar.trace_add("write", updateLabel)
+    comVarType.trace_add("write", updateLabel)
     chkvar3.trace_add("write", updateCheck)
     chkvar1.trace_add("write", updateCheck)
     ################ Layout ################
     lbl.grid(row=0, column=0, sticky="w", padx=5, pady=5)
     com.grid(row=0, column=1, columnspan=2, sticky="ew", pady=5)
     comType.grid(row=1, column=1, columnspan=2, sticky="ew", pady=5)
+    lblType.grid(row=1, column=0, sticky="w", padx=5, pady=5)
 
     lbl2.grid(row=2, column=0, sticky="w", padx=5)
     en2.grid(row=2, column=1, columnspan=2, sticky="ew", pady=3)
