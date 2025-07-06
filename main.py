@@ -30,6 +30,7 @@ try:
     chkvar1 = IntVar()
     chkvar3 = IntVar()
     comVar = StringVar()
+    comVarType = StringVar()
     lbl2Text = StringVar()
     lbl3Text = StringVar()
     sclVar = IntVar(value=0)   
@@ -37,24 +38,31 @@ try:
     ################ Functions ################
     def updateLabel(*args):
         shape = comVar.get()
+        type = comVarType.get()
         if shape == "Rectangle":
-            en3.configure(state="normal")
+            en3.config(state="normal")
+            comType.config(state="disabled")
             lbl2Text.set("Length:")
             lbl3Text.set("Height:")
         elif shape == "Square":
+            en3.config(state="disabled")
+            comType.config(state="disabled")
             lbl2Text.set("Side:")
             lbl3Text.set("-")
-            en3.configure(state="disabled")
-            en3.configure(fg_color="gray")
         elif shape == "Triangle":
-            lbl2Text.set("Side:")
+                comType.config(state="normal")
+                if type == "Equilateral":
+                    lbl2Text.set("Side:")
+                    lbl3Text.set("-")
+                    en3.config(state="disabled")
+                elif type in ("Isosceles", "Right"):
+                    lbl2Text.set("Base:")
+                    lbl3Text.set("Height:")
+                    en3.config(state="normal")
+        elif shape is None or shape == "":
+            lbl2Text.set("-")
             lbl3Text.set("-")
-            en3.configure(state="disabled")
-            en3.configure(fg_color="gray")
-        else:
-            lbl2Text.set("")
-            lbl3Text.set("")
-
+            en3.config(state="disabled")
     def updateCheck(*args):
         if chkvar3.get() == 1:
             slider.configure(state="normal")
@@ -71,6 +79,8 @@ try:
             self.rect = rect
             self.carr = carr
             self.tri_equi = tri_equi
+            self.tri_iso = tri_iso
+            self.tri_rect = tri_rect
             self.outColored = None
             self.outliner = turtle.Turtle()
         def cChooser(self, outline, fillcolor):
@@ -87,6 +97,7 @@ try:
                     pass
         def logicGetter(self):
             self.shape = comVar.get()
+            self.shapeType = comVarType.get()
             self.outline = chkvar3.get()
             self.filled = chkvar1.get()
             self.m1 = int(en2var.get())
@@ -140,16 +151,40 @@ try:
                         self.rect(self.m1, self.m2, False, None)
                     turtle.done()
                 case "Triangle":
-                    window.deiconify() #type: ignore
-                    if filling:
-                        self.tri_equi(self.m1, True, self.chosen_c)
-                    elif not filling and not outlined:
-                        self.tri_equi(self.m1, False, None)
-                    if outlined and self.outColored:
-                        self.outDraw(self.tri_equi, self.outSize, self.outColor)
-                    elif outlined and not self.outColored:
-                        self.outDraw(self.tri_equi, self.outSize, None)
-                    turtle.done()
+                    match self.shapeType:
+                        case "Equilateral":
+                            window.deiconify() #type: ignore
+                            if filling:
+                                self.tri_equi(self.m1, True, self.chosen_c)
+                            elif not filling and not outlined:
+                                self.tri_equi(self.m1, False, None)
+                            if outlined and self.outColored:
+                                self.outDraw(self.tri_equi, self.outSize, self.outColor)
+                            elif outlined and not self.outColored:
+                                self.outDraw(self.tri_equi, self.outSize, None)
+                            turtle.done()
+                        case "Isosceles":
+                            window.deiconify()
+                            if filling:
+                                self.tri_iso(self.m1, self.m2, True, self.chosen_c)
+                            elif not filling and not outlined:
+                                self.tri_iso(self.m1, self.m2, False, None)
+                            if outlined and self.outColored:
+                                self.outDraw(self.tri_iso, self.outSize, self.outColor)
+                            elif outlined and not self.outColored:
+                                self.outDraw(self.tri_iso, self.outSize, None)
+                            turtle.done()                                                    
+                        case "Right":
+                            window.deiconify()
+                            if filling:
+                                self.tri_rect(self.m1, self.m2, True, self.chosen_c)                            
+                            elif not filling and not outlined:
+                                self.tri_rect(self.m1,self.m2, False, None)
+                            if outlined and self.outColored:
+                                self.outDraw(self.tri_rect, self.outSize, self.outColor)
+                            elif outlined and not self.outColored:
+                                self.outDraw(self.tri_rect, self.outSize, None)
+                            turtle.done()
         def outDraw(self, shape, size, src):
             self.outliner.pensize(size)
             self.outliner.penup()
@@ -167,6 +202,12 @@ try:
                 self.outRect(self.m1, self.m2)
             elif shape == self.carr:
                 self.outSq(self.m1)
+            elif shape == self.tri_rect:
+                self.outTriRect(self.m1, self.m2)
+            elif shape == self.tri_iso:
+                self.outTrIso(self.m1, self.m2)
+            elif shape == self.tri_equi:
+                self.outTriEqui(self.m1)
         def outSq(self, size):
             for x in range(4):
                 self.outliner.forward(size)
@@ -181,7 +222,30 @@ try:
             for _ in range(3):
                 self.outliner.forward(side)
                 self.outliner.left(120)
-
+        def outTrIso(self, side, base):
+            height = (side ** 2 - (base / 2) ** 2) ** 0.5
+            # Draw the isosceles triangle
+            angle = math.degrees(math.atan(height / (base / 2)))
+            self.outliner.forward(base)  # Draw the base
+            self.outliner.left(180 - angle)  # Turn to draw the first equal side
+            self.outliner.forward(side)  # Draw the first equal side
+            self.outliner.left(2 * angle)  # Turn to draw the second equal side
+            self.outliner.forward(side)
+        def outTriRect(self, a, b):
+            # Calculate hypotenuse
+            c = math.sqrt(a ** 2 + b ** 2)
+            angle = math.degrees(math.atan2(b, a))
+            # Move to starting position (optional)
+            self.outliner.penup()
+            self.outliner.goto(-a // 2, -b // 2)  # Centering the triangle
+            self.outliner.pendown()
+            # Draw the triangle correctly
+            self.outliner.forward(a)  # Base
+            self.outliner.left(90)
+            self.outliner.forward(b)  # Height
+            self.outliner.left(90 + angle)
+            self.outliner.forward(c)  # Hypotenuse
+        
     logic = Logic()
     def cAsk(src: str):
         if src == "outline":
@@ -189,10 +253,14 @@ try:
         elif src == "fill":
             logic.cChooser(False, True)
     ################ Widget Creation ################
-    # Dropdown
+    # ShapeDropdown
     lbl = CTkLabel(fr, text="Shape:")
     com = CTkOptionMenu(fr, variable=comVar, values=["Rectangle", "Square", "Triangle"])
     com.configure(state="readonly")
+    #ShapeType Dropdown
+    lblType = CTkLabel(fr, text="Shape Type:")
+    comType = CTkComboBox(fr, textvariable=comVarType, values=["Equilateral", "Isosceles", "Right"])
+    comType.config(state="readonly")
     # Entry labels and boxes
     lbl2 = CTkLabel(fr, textvariable=lbl2Text)
     en2 = CTkEntry(fr, textvariable=en2var)
@@ -212,28 +280,32 @@ try:
     dbtn = CTkButton(fr, text="Draw !", command=logic.logicGetter)
     ########################Traces#########################
     comVar.trace_add("write", updateLabel)
+    comVarType.trace_add("write", updateLabel)
     chkvar3.trace_add("write", updateCheck)
     chkvar1.trace_add("write", updateCheck)
     ################ Layout ################
     lbl.grid(row=0, column=0, sticky="w", padx=5, pady=5)
     com.grid(row=0, column=1, columnspan=2, sticky="ew", pady=5)
+    comType.grid(row=1, column=1, columnspan=2, sticky="ew", pady=5)
+    lblType.grid(row=1, column=0, sticky="w", padx=5, pady=5)
 
-    lbl2.grid(row=1, column=0, sticky="w", padx=5)
-    en2.grid(row=1, column=1, columnspan=2, sticky="ew", pady=3)
+    lbl2.grid(row=2, column=0, sticky="w", padx=5)
+    en2.grid(row=2, column=1, columnspan=2, sticky="ew", pady=3)
 
-    lbl3.grid(row=2, column=0, sticky="w", padx=5)
-    en3.grid(row=2, column=1, columnspan=2, sticky="ew", pady=3)
+    lbl3.grid(row=3, column=0, sticky="w", padx=5)
+    en3.grid(row=3, column=1, columnspan=2, sticky="ew", pady=3)
 
-    lbl4.grid(row=3, column=0, sticky="w", padx=5)
-    slider.grid(row=3, column=1, columnspan=2, sticky="ew", pady=3)
+    lbl4.grid(row=4, column=0, sticky="w", padx=5)
+    scl.grid(row=4, column=1, columnspan=2, sticky="ew", pady=3)
 
-    check_frame.grid(row=4, column=0, columnspan=3, pady=10)
+    check_frame.grid(row=5, column=0, columnspan=3, pady=5)
     chk1.grid(row=0, column=0, padx=10)
     chk3.grid(row=0, column=1, padx=10)
 
-    cbtn.grid(row=5, column=0, columnspan=2, sticky="ew", padx=9, pady=4)
-    obtn.grid(row=5, column=2, sticky="ew", padx=12, pady=5)
-    dbtn.grid(row=6, column=0, columnspan=3, sticky="ew", pady=17)
+    cbtn.grid(row=6, column=0, columnspan=2, sticky="ew", padx=5, pady=5,  ipady=4)
+    obtn.grid(row=6, column=2, sticky="ew", padx=5, pady=5, ipady=4)
+    dbtn.grid(row=7, column=0, columnspan=3, sticky="ew", pady=5, ipady=5)
+    ebtn.grid(row=8, column=0, columnspan=3, sticky="ew", pady=5, ipady=5)
     # Make entries and combo expand
     fr.columnconfigure(1, weight=1)
     fr.columnconfigure(2, weight=1)
