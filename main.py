@@ -175,6 +175,7 @@ try:
                                 self.outDraw(self.tri_iso, self.outSize, None)
                             turtle.done()                                                    
                         case "Right":
+                            window.deiconify()
                             if filling:
                                 self.tri_rect(self.m1, self.m2, True, self.chosen_c)                            
                             elif not filling and not outlined:
@@ -201,6 +202,12 @@ try:
                 self.outRect(self.m1, self.m2)
             elif shape == self.carr:
                 self.outSq(self.m1)
+            elif shape == self.tri_rect:
+                self.outTriRect(self.m1, self.m2)
+            elif shape == self.tri_iso:
+                self.outTrIso(self.m1, self.m2)
+            elif shape == self.tri_equi:
+                self.outTriEqui(self.m1)
         def outSq(self, size):
             for x in range(4):
                 self.outliner.forward(size)
@@ -215,7 +222,7 @@ try:
             for _ in range(3):
                 self.outliner.forward(side)
                 self.outliner.left(120)
-        def outTrIso(self, side, base, fill):
+        def outTrIso(self, side, base):
             height = (side ** 2 - (base / 2) ** 2) ** 0.5
             # Draw the isosceles triangle
             angle = math.degrees(math.atan(height / (base / 2)))
@@ -224,9 +231,20 @@ try:
             self.outliner.forward(side)  # Draw the first equal side
             self.outliner.left(2 * angle)  # Turn to draw the second equal side
             self.outliner.forward(side)
-            if fill == True:
-                self.outliner.end_fill()
-
+        def outTriRect(self, a, b):
+            # Calculate hypotenuse
+            c = math.sqrt(a ** 2 + b ** 2)
+            angle = math.degrees(math.atan2(b, a))
+            # Move to starting position (optional)
+            self.outliner.penup()
+            self.outliner.goto(-a // 2, -b // 2)  # Centering the triangle
+            self.outliner.pendown()
+            # Draw the triangle correctly
+            self.outliner.forward(a)  # Base
+            self.outliner.left(90)
+            self.outliner.forward(b)  # Height
+            self.outliner.left(90 + angle)
+            self.outliner.forward(c)  # Hypotenuse
     logic = Logic()
     def cAsk(src: str):
         if src == "outline":
