@@ -181,7 +181,7 @@ try:
             for _ in range(3):
                 self.outliner.forward(side)
                 self.outliner.left(120)
-
+        
     logic = Logic()
     def cAsk(src: str):
         if src == "outline":

@@ -21,45 +21,46 @@ def tri_equi(cote, fill, source):
         trit.end_fill()
 
 def tri_iso(side, base, fill, source):
-    t = turtle.Turtle()
+    trit = turtle.Turtle()
     if source == None:
-        t.color(blk)
+        trit.color(blk)
     elif fill == True and bool(source) == True:
         fcolor = source
-        t.color(fcolor)
-        t.begin_fill()
+        trit.color(fcolor)
+        trit.begin_fill()
 
     height = (side ** 2 - (base / 2) ** 2) ** 0.5
     # Draw the isosceles triangle
     angle = math.degrees(math.atan(height / (base / 2)))
     # Draw the isosceles triangle
-    t.forward(base)  # Draw the base
-    t.left(180 - angle)  # Turn to draw the first equal side
-    t.forward(side)  # Draw the first equal side
-    t.left(2 * angle)  # Turn to draw the second equal side
-    t.forward(side)
+    trit.forward(base)  # Draw the base
+    trit.left(180 - angle)  # Turn to draw the first equal side
+    trit.forward(side)  # Draw the first equal side
+    trit.left(2 * angle)  # Turn to draw the second equal side
+    trit.forward(side)
     if fill == True:
-        t.end_fill()
+        trit.end_fill()
 
 def tri_rect(a, b, fill, source):
-    t = turtle.Turtle()
+    trit = turtle.Turtle()
     if source == None:
-        t.color(blk)
+        trit.color(blk)
     elif fill == True and bool(source) == True:
         fcolor = source
-        t.color(fcolor)
-        t.begin_fill()
-    t = turtle.Turtle()
+        trit.color(fcolor)
+        trit.begin_fill()
     # Calculate hypotenuse
     c = math.sqrt(a ** 2 + b ** 2)
     angle = math.degrees(math.atan2(b, a))
     # Move to starting position (optional)
-    t.penup()
-    t.goto(-a // 2, -b // 2)  # Centering the triangle
-    t.pendown()
+    trit.penup()
+    trit.goto(-a // 2, -b // 2)  # Centering the triangle
+    trit.pendown()
     # Draw the triangle correctly
-    t.forward(a)  # Base
-    t.left(90)
-    t.forward(b)  # Height
-    t.left(90 + angle)
-    t.forward(c)  # Hypotenuse
+    trit.forward(a)  # Base
+    trit.left(90)
+    trit.forward(b)  # Height
+    trit.left(90 + angle)
+    trit.forward(c)  # Hypotenuse
+    if fill == True:
+        trit.end_fill()
