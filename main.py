@@ -14,7 +14,6 @@ try:
     root.title("autoDraw")
     root.geometry("300x340")
     root.resizable(0, 0) # type: ignore
-    root.wm_attributes("-topmost", 1)
     screen = turtle.Screen()
     window = screen.getcanvas().winfo_toplevel()
     window.protocol("WM_DELETE_WINDOW", window.withdraw) #type: ignore
@@ -245,7 +244,14 @@ try:
             self.outliner.forward(b)  # Height
             self.outliner.left(90 + angle)
             self.outliner.forward(c)  # Hypotenuse
+    class Export(Logic):
+        def toplevel(self):
+            self.exportTP = Toplevel(root)
+            self.exportTP.focus()
+            self.exportTP.title("Export")
+            self.exportTP.iconbitmap("pencil.ico")
     logic = Logic()
+    export = Export()
     def cAsk(src: str):
         if src == "outline":
             logic.cChooser(True, False)
@@ -281,7 +287,7 @@ try:
     cbtn = ttk.Button(fr, text="🎨 Fill Color", state="disabled", command= lambda: cAsk("fill"))
     obtn = ttk.Button(fr, text="🖊 Outline Color", state="disabled", command= lambda: cAsk("outline"))
     dbtn = ttk.Button(fr, text="🖌 Draw !", command=logic.logicGetter)
-    ebtn = ttk.Button(fr, text="⬇️ Export", command=lambda: msg.showinfo("Info", "This feature is not implemented yet."))
+    ebtn = ttk.Button(fr, text="⬇️ Export", command=export.toplevel)
     ########################Traces#########################
     comVar.trace_add("write", updateLabel)
     comVarType.trace_add("write", updateLabel)
