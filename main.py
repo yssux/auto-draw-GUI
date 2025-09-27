@@ -33,7 +33,7 @@ try:
     lbl2Text = StringVar()
     lbl3Text = StringVar()
     sclVar = IntVar(value=0)
-
+    comVarFileType = StringVar()
     ################ Functions ################
     def updateLabel(*args):
         shape = comVar.get()
@@ -250,6 +250,24 @@ try:
             self.exportTP.focus()
             self.exportTP.title("Export")
             self.exportTP.iconbitmap("pencil.ico")
+            self.exportTP.geometry("902x424")
+            self.drawWidgets()
+        def drawWidgets(self):
+            self.exportCombo = ttk.Combobox(self.exportTP, textvariable=comVarFileType, values=["PNG", "JPEG", "SVG"])
+            self.exportBtn = ttk.Button(self.exportTP, text="Export!")
+            self.cancelBtn = ttk.Button(self.exportTP, text="Cancel")
+            self.preview = Canvas(self.exportTP, bg="black", width=300, height=300)
+            # Configure grid
+            self.exportTP.columnconfigure(0, weight=1)
+            self.exportTP.columnconfigure(1, weight=1)
+            self.exportTP.rowconfigure(0, weight=0)
+            self.exportTP.rowconfigure(1, weight=1)
+            self.exportTP.rowconfigure(2, weight=0)
+            self.exportCombo.grid(row=0, column=0, padx=20, pady=20, sticky="ew")
+            self.exportBtn.grid(row=2, column=0, sticky="e", padx=(40, 10), pady=20)
+            self.cancelBtn.grid(row=2, column=0, sticky="w", padx=(10, 40), pady=20)
+            self.preview.grid(row=0, column=5, rowspan=3, padx=20, pady=20, sticky="nsew")
+
     logic = Logic()
     export = Export()
     def cAsk(src: str):
