@@ -16,7 +16,13 @@ try:
     root.resizable(0, 0) # type: ignore
     screen = turtle.Screen()
     window = screen.getcanvas().winfo_toplevel()
-    window.protocol("WM_DELETE_WINDOW", window.withdraw) #type: ignore
+    def close_turtle_canvas():
+        global drew
+    # Mark canvas as empty again
+        drew = False
+    # Hide turtle window instead of closing the whole app
+        window.withdraw()
+    window.protocol("WM_DELETE_WINDOW", close_turtle_canvas) #type: ignore
     screen.setup(500, 500)
     screen.title("autoDraw")
     window.withdraw() #type: ignore
@@ -34,6 +40,7 @@ try:
     lbl3Text = StringVar()
     sclVar = IntVar(value=0)
     comVarFileType = StringVar()
+    drew = False
     ################ Functions ################
     def updateLabel(*args):
         shape = comVar.get()
@@ -87,7 +94,7 @@ try:
             if gui_chooser[1] is not None:
                 if outline:
                     self.outColor = gui_chooser[1]
-                    self.outColored
+                    self.outColored= True
                 elif outline == False:
                     self.chosen_c = gui_chooser[1]
             elif gui_chooser[1] is None:
@@ -124,6 +131,7 @@ try:
             elif not self.outline and not self.filled:
                 self.logic(False, False)
         def logic(self, filling, outlined):
+            global drew
             match self.shape:
                 case "Square":
                     window.deiconify() #type: ignore
@@ -135,6 +143,7 @@ try:
                         self.outDraw(self.carr, self.outSize, None)
                     elif not outlined and not filling and not self.outColored:
                         self.carr(self.m1, False, None)
+                    drew = True
                     turtle.done()
                 case "Rectangle":
                     window.deiconify() #type: ignore
@@ -148,6 +157,7 @@ try:
                         self.outDraw(self.rect, self.outSize, None)
                     elif not outlined and not filling and not self.outColored:
                         self.rect(self.m1, self.m2, False, None)
+                    drew = True
                     turtle.done()
                 case "Triangle":
                     match self.shapeType:
@@ -161,6 +171,7 @@ try:
                                 self.outDraw(self.tri_equi, self.outSize, self.outColor)
                             elif outlined and not self.outColored:
                                 self.outDraw(self.tri_equi, self.outSize, None)
+                            drew = True
                             turtle.done()
                         case "Isosceles":
                             window.deiconify()
@@ -172,7 +183,8 @@ try:
                                 self.outDraw(self.tri_iso, self.outSize, self.outColor)
                             elif outlined and not self.outColored:
                                 self.outDraw(self.tri_iso, self.outSize, None)
-                            turtle.done()                                                    
+                            drew = True                                                    
+                            turtle.done()
                         case "Right":
                             window.deiconify()
                             if filling:
@@ -183,6 +195,7 @@ try:
                                 self.outDraw(self.tri_rect, self.outSize, self.outColor)
                             elif outlined and not self.outColored:
                                 self.outDraw(self.tri_rect, self.outSize, None)
+                            drew = True
                             turtle.done()
         def outDraw(self, shape, size, src):
             self.outliner.pensize(size)
@@ -252,7 +265,8 @@ try:
             self.exportTP.focus()
             self.exportTP.title("Export")
             self.exportTP.iconbitmap("pencil.ico")
-            self.exportTP.geometry("550x325")
+            self.exportTP.geometry("605x325")
+            self.exportTP.resizable(False, False)
             self.drawWidgets()
         def drawWidgets(self):
             self.exportCombo = ttk.Combobox(self.exportTP, textvariable=comVarFileType, values=self.fmtList)
@@ -269,7 +283,15 @@ try:
             self.exportBtn.grid(row=2, column=0, sticky="e", padx=(40, 10), pady=20)
             self.cancelBtn.grid(row=2, column=0, sticky="w", padx=(10, 40), pady=20)
             self.preview.grid(row=0, column=5, rowspan=3, padx=20, pady=20, sticky="nsew")
-
+        
+        def exportLogic(self):
+            global drew
+            if not drew:
+                msg.showerror(title="Error", message="Please draw a shape first")
+                return None
+            else:
+                self.toplevel()
+                
     logic = Logic()
     export = Export()
     def cAsk(src: str):
@@ -281,7 +303,7 @@ try:
     # ShapeDropdown
     lbl = ttk.Label(fr, text="Shape:")
     com = ttk.Combobox(fr, textvariable=comVar, values=["Rectangle", "Square", "Triangle"])
-    com.current(0)
+    com.current(1)
     com.config(state="readonly")
     #ShapeType Dropdown
     lblType = ttk.Label(fr, text="Shape Type:")
@@ -307,7 +329,7 @@ try:
     cbtn = ttk.Button(fr, text="🎨 Fill Color", state="disabled", command= lambda: cAsk("fill"))
     obtn = ttk.Button(fr, text="🖊 Outline Color", state="disabled", command= lambda: cAsk("outline"))
     dbtn = ttk.Button(fr, text="🖌 Draw !", command=logic.logicGetter)
-    ebtn = ttk.Button(fr, text="⬇️ Export", command=export.toplevel)
+    ebtn = ttk.Button(fr, text="⬇️ Export", command= lambda: export.exportLogic())
     ########################Traces#########################
     comVar.trace_add("write", updateLabel)
     comVarType.trace_add("write", updateLabel)
