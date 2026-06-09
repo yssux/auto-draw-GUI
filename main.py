@@ -245,17 +245,19 @@ try:
             self.outliner.left(90 + angle)
             self.outliner.forward(c)  # Hypotenuse
     class Export(Logic):
+        def __init__(self):
+            self.fmtList = ["Portable Network Graphics (.png)", "JPEG (.jpeg)", "Scalable Vector Graphics (.svg)"]
         def toplevel(self):
             self.exportTP = Toplevel(root)
             self.exportTP.focus()
             self.exportTP.title("Export")
             self.exportTP.iconbitmap("pencil.ico")
-            self.exportTP.geometry("902x424")
+            self.exportTP.geometry("550x325")
             self.drawWidgets()
         def drawWidgets(self):
-            self.exportCombo = ttk.Combobox(self.exportTP, textvariable=comVarFileType, values=["PNG", "JPEG", "SVG"])
+            self.exportCombo = ttk.Combobox(self.exportTP, textvariable=comVarFileType, values=self.fmtList)
             self.exportBtn = ttk.Button(self.exportTP, text="Export!")
-            self.cancelBtn = ttk.Button(self.exportTP, text="Cancel")
+            self.cancelBtn = ttk.Button(self.exportTP, text="Cancel", command= lambda: self.exportTP.destroy())
             self.preview = Canvas(self.exportTP, bg="black", width=300, height=300)
             # Configure grid
             self.exportTP.columnconfigure(0, weight=1)
