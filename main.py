@@ -16,12 +16,14 @@ try:
     root.resizable(0, 0) # type: ignore
     screen = turtle.Screen()
     window = screen.getcanvas().winfo_toplevel()
+
     def close_turtle_canvas():
         global drew
     # Mark canvas as empty again
         drew = False
     # Hide turtle window instead of closing the whole app
         window.withdraw()
+
     window.protocol("WM_DELETE_WINDOW", close_turtle_canvas) #type: ignore
     screen.setup(500, 500)
     screen.title("autoDraw")
@@ -270,7 +272,7 @@ try:
             self.drawWidgets()
         def drawWidgets(self):
             self.exportCombo = ttk.Combobox(self.exportTP, textvariable=comVarFileType, values=self.fmtList)
-            self.exportBtn = ttk.Button(self.exportTP, text="Export!")
+            self.exportBtn = ttk.Button(self.exportTP, text="Export!", command= lambda: msg.showinfo("Info", "This Feature has not been implemented yet."))
             self.cancelBtn = ttk.Button(self.exportTP, text="Cancel", command= lambda: self.exportTP.destroy())
             self.preview = Canvas(self.exportTP, bg="black", width=300, height=300)
             # Configure grid
